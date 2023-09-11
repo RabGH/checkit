@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import CreateCollectionSidebar from "@/components/dashboard/collection/create-collection-sidebar";
+import CreateCollectionSidebar from "@/components/dashboard/collection/collection-create-sidebar";
 import { useMount } from "@/hooks/mount-hook";
 
 const CreateCollectionButton = () => {

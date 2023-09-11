@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import SadFace from "@/components/icons/sad-face";
-import CreateCollectionButton from "@/components/dashboard/collection/create-collection-button";
+import CreateCollectionButton from "@/components/dashboard/collection/collection-create-button";
 import CollectionCard from "@/components/dashboard/collection/collection-card";
 
 export default async function CollectionList() {

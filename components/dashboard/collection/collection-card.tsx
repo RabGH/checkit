@@ -29,7 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/use-toast";
-import CreateTaskDialog from "@/components/dashboard/task/create-task-dialog";
+import CreateTaskDialog from "@/components/dashboard/task/task-create-dialog";
 import TaskCard from "@/components/dashboard/task/task-card";
 
 interface CollectionCardProps {
