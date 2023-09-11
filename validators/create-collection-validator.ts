@@ -1,0 +1,16 @@
+import { z } from "zod";
+
+import { CollectionColors } from "@/util/constants";
+
+export const CreateCollectionValidator = z.object({
+  name: z.string().min(4, {
+    message: "Collection name must be at least 4 characters",
+  }),
+  color: z
+    .string()
+    .refine((color) => Object.keys(CollectionColors).includes(color)),
+});
+
+export type CreateCollectionValidatorType = z.infer<
+  typeof CreateCollectionValidator
+>;
