@@ -1,17 +1,14 @@
-import { currentUser } from "@clerk/nextjs";
+import { Suspense } from "react";
 
-const CheckItPage = async () => {
-  const user = await currentUser();
+import WelcomeMsg from "@/components/dashboard/welcome";
+import WelcomeMsgFallback from "@/components/dashboard/welcome-fallback";
 
-  if (!user) {
-    return <div>Error</div>;
-  }
-
+export default async function Home() {
   return (
-    <div>
-      Welcome, <br /> {user.firstName} {user.lastName}
-    </div>
+    <>
+      <Suspense fallback={<WelcomeMsgFallback />}>
+        <WelcomeMsg />
+      </Suspense>
+    </>
   );
-};
-
-export default CheckItPage;
+}

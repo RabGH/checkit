@@ -1,7 +1,7 @@
 import Navbar from "@/components/navigation/navbar";
 import { Separator } from "@/components/ui/separator";
 
-const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+const PageLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex min-h-screen w-full flex-col items-center dark:bg-black">
       <Navbar />
@@ -13,4 +13,4 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default DashboardLayout;
+export default PageLayout;
