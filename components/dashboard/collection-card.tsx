@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import { CollectionColor, CollectionColors } from "@/util/constants";
 import { Collection } from "@prisma/client";
+import { DeleteCollection } from "@/actions/collection";
 import { cn } from "@/lib/utils";
 
 import {
@@ -16,7 +18,17 @@ import { CaretUpIcon, CaretDownIcon, TrashIcon } from "@radix-ui/react-icons";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import PlusIcon from "@/components/icons/plus-icon";
-import { AlertDialog } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "@/components/ui/use-toast";
 
 interface CollectionCardProps {
   collection: Collection;
@@ -26,6 +38,28 @@ const tasks: string[] = ["Task 1", "Task 2"];
 
 const CollectionCard = ({ collection }: CollectionCardProps) => {
   const [isOpen, setIsOpen] = useState(true);
+  const router = useRouter();
+
+  const [isLoading, startTransition] = useTransition();
+
+  const removeCollection = async () => {
+    try {
+      await DeleteCollection(collection.id);
+      toast({
+        title: "Success",
+        description: "Collection Deleted.",
+      });
+
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong, can not delete collection.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
@@ -60,15 +94,39 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
         justify-between items-center"
         >
           <p>Created at {collection.createdAt.toLocaleDateString("en-US")}</p>
-          <div>
-            <Button size="icon" variant="ghost">
-              <PlusIcon />
-            </Button>
-            <AlertDialog></AlertDialog>
-            <Button size="icon" variant="ghost">
-              <TrashIcon />
-            </Button>
-          </div>
+          {isLoading && <div>Deleting...</div>}
+          {!isLoading && (
+            <div>
+              <Button size="icon" variant="ghost">
+                <PlusIcon />
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="icon" variant="ghost">
+                    <TrashIcon />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You are about to permenantly delete a collection and all
+                    it&apos;s tasks, this action can not be undone.
+                  </AlertDialogDescription>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => {
+                        startTransition(removeCollection);
+                      }}
+                      className="bg-red-700 text-white hover:bg-red-900"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </footer>
       </CollapsibleContent>
     </Collapsible>

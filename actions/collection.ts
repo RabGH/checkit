@@ -20,3 +20,16 @@ export async function CreateCollection(form: CreateCollectionValidatorType) {
     },
   });
 }
+
+export async function DeleteCollection(id: number) {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return await prismadb.collection.delete({
+    where: {
+      id: id,
+      userId: user.id,
+    },
+  });
+}
