@@ -4,6 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import SadFace from "@/components/icons/sad-face";
 import CreateCollectionButton from "@/components/dashboard/create-collection-button";
+import CollectionCard from "@/components/dashboard/collection-card";
 
 export default async function CollectionList() {
   const user = await currentUser();
@@ -29,9 +30,13 @@ export default async function CollectionList() {
   }
 
   return (
-    <div>
-      Collections: {collections.length}
+    <>
       <CreateCollectionButton />
-    </div>
+      <div className="flex flex-col gap-4 mt-6">
+        {collections.map((collection) => (
+          <CollectionCard key={collection.id} collection={collection} />
+        ))}
+      </div>
+    </>
   );
 }

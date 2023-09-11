@@ -49,6 +49,7 @@ const CreateCollectionSidebar = ({
   onOpenChange,
 }: CreactCollectionSiderbarProps) => {
   const router = useRouter();
+
   const form = useForm<CreateCollectionValidatorType>({
     defaultValues: {},
     resolver: zodResolver(CreateCollectionValidator),
