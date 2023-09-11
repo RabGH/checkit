@@ -65,7 +65,7 @@ const CreateCollectionSidebar = ({
 
       toast({
         title: "Success",
-        description: "Collection added successfully!",
+        description: "Collection created.",
         variant: "default",
       });
 
