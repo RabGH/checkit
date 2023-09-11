@@ -1,5 +1,7 @@
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 import {
   Sheet,
@@ -25,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -45,16 +48,34 @@ const CreateCollectionSidebar = ({
   open,
   onOpenChange,
 }: CreactCollectionSiderbarProps) => {
+  const router = useRouter();
   const form = useForm<CreateCollectionValidatorType>({
     defaultValues: {},
     resolver: zodResolver(CreateCollectionValidator),
   });
 
+  const isLoading = form.formState.isSubmitting;
+
   const onSubmit = async (data: CreateCollectionValidatorType) => {
     try {
       await CreateCollection(data);
+
+      openChangeWrapper(false);
+
+      toast({
+        title: "Success",
+        description: "Collection added successfully!",
+        variant: "default",
+      });
+
+      router.refresh();
     } catch (error: any) {
-      alert("ERROR");
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+
       console.log("Error while creating collection", error);
     }
   };
@@ -139,6 +160,7 @@ const CreateCollectionSidebar = ({
         <div className="flex flex-col gap-3 mt-4">
           <Separator />
           <Button
+            disabled={isLoading}
             variant="outline"
             className={cn(
               form.watch("color") &&
@@ -147,6 +169,7 @@ const CreateCollectionSidebar = ({
             onClick={form.handleSubmit(onSubmit)}
           >
             Confirm
+            {isLoading && <ReloadIcon className="ml-2 h-4 w-4 animate-spin" />}
           </Button>
         </div>
       </SheetContent>
