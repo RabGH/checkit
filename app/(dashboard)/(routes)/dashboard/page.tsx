@@ -1,7 +1,17 @@
-import { UserButton } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs";
 
-const CheckItPage = () => {
-  return <div>Hello</div>;
+const CheckItPage = async () => {
+  const user = await currentUser();
+
+  if (!user) {
+    return <div>Error</div>;
+  }
+
+  return (
+    <div>
+      Welcome, <br /> {user.firstName} {user.lastName}
+    </div>
+  );
 };
 
 export default CheckItPage;
