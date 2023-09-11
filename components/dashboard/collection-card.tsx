@@ -12,9 +12,11 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
-import { CaretUpIcon, CaretDownIcon } from "@radix-ui/react-icons";
+import { CaretUpIcon, CaretDownIcon, TrashIcon } from "@radix-ui/react-icons";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import PlusIcon from "@/components/icons/plus-icon";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 interface CollectionCardProps {
   collection: Collection;
@@ -57,7 +59,16 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
           className="h-[40px] px-4 p-[2px] text-xs text-neutral-500 flex 
         justify-between items-center"
         >
-          <p>Created at {collection.createdAt.toDateString()}</p>
+          <p>Created at {collection.createdAt.toLocaleDateString("en-US")}</p>
+          <div>
+            <Button size="icon" variant="ghost">
+              <PlusIcon />
+            </Button>
+            <AlertDialog></AlertDialog>
+            <Button size="icon" variant="ghost">
+              <TrashIcon />
+            </Button>
+          </div>
         </footer>
       </CollapsibleContent>
     </Collapsible>
