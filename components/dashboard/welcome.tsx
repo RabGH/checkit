@@ -1,10 +1,8 @@
 import { currentUser } from "@clerk/nextjs";
 
-import { wait } from "@/lib/wait";
-
 export default async function WelcomeMsg() {
   const user = await currentUser();
-  await wait(1000);
+  
 
   if (!user) {
     return <div>Error - Unauthenticated or No User</div>;
