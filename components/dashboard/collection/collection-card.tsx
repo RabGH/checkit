@@ -29,7 +29,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/use-toast";
-import CreateTaskDialog from "@/components/dashboard/create-task-dialog";
+import CreateTaskDialog from "@/components/dashboard/task/create-task-dialog";
+import TaskCard from "@/components/dashboard/task/task-card";
 
 interface CollectionCardProps {
   collection: Collection & {
@@ -87,13 +88,28 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="flex rounded-b-md flex-col dark:bg-neutral-900 shadow-lg">
-          {tasks.length === 0 && <div>No tasks</div>}
+          {tasks.length === 0 && (
+            <Button
+              variant="ghost"
+              className="flex items-center justify-center gap-1 p-8 py-12 rounded-none"
+              onClick={() => setShowCreateModal(true)}
+            >
+              <span
+                className={cn(
+                  "text-lg bg-clip-text text-transparent",
+                  CollectionColors[collection.color as CollectionColor]
+                )}
+              >
+                Create Task
+              </span>
+            </Button>
+          )}
           {tasks.length > 0 && (
             <>
               <Progress className="rounded-none" value={45} />
               <div className="p-4 gap-3 flex flex-col">
                 {tasks.map((task) => (
-                  <div key={task.id}>{task.content}</div>
+                  <TaskCard key={task.id} task={task} />
                 ))}
               </div>
             </>

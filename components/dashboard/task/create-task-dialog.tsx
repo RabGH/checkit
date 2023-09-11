@@ -73,6 +73,7 @@ function CreateTaskDialog({
         title: "Success",
         description: "Task created",
       });
+      setOpen(false);
 
       router.refresh();
     } catch (error) {
@@ -119,7 +120,7 @@ function CreateTaskDialog({
                 name="content"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Expires at</FormLabel>
+                    <FormLabel>Task Content</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
