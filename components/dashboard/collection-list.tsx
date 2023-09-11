@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import SadFace from "@/components/icons/sad-face";
-import CreateCollectionButton from "@/components/dashboard/create-collection";
+import CreateCollectionButton from "@/components/dashboard/create-collection-button";
 
 export default async function CollectionList() {
   const user = await currentUser();
@@ -27,4 +27,11 @@ export default async function CollectionList() {
       </div>
     );
   }
+
+  return (
+    <div>
+      Collections: {collections.length}
+      <CreateCollectionButton />
+    </div>
+  );
 }
