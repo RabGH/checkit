@@ -14,7 +14,7 @@ export default async function CollectionList() {
 
   if (collections.length === 0) {
     return (
-      <Alert className="mt-10">
+      <Alert>
         <SadFace />
         <AlertTitle>No Collections</AlertTitle>
         <AlertDescription>Create a collection to get started</AlertDescription>

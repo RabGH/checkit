@@ -13,7 +13,7 @@ export default async function Home() {
       <Suspense fallback={<WelcomeMsgFallback />}>
         <WelcomeMsg />
       </Suspense>
-      <Suspense fallback={<div className="mt-10">Loading collections...</div>}>
+      <Suspense fallback={<div>Loading collections...</div>}>
         <CollectionList />
       </Suspense>
     </>
