@@ -11,9 +11,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useMount } from "@/hooks/mount-hook";
 
 export function DarkMode() {
   const { setTheme } = useTheme();
+  const mount = useMount();
+  if (!mount) return null;
 
   return (
     <DropdownMenu>
