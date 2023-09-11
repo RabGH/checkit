@@ -63,6 +63,7 @@ function CreateTaskDialog({
 
   const openChangeWrapper = (value: boolean) => {
     setOpen(value);
+    form.reset();
   };
 
   const onSubmit = async (data: CreateTaskValidatorType) => {
