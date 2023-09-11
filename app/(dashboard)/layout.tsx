@@ -1,10 +1,14 @@
-const LandingLayout = ({ children }: { children: React.ReactNode }) => {
-    return (
-      <main className="h-full overflow-auto">
-        <div className="mx-auto max-w-screen-xl h-full w-full">{children}</div>
-      </main>
-    );
-  };
-  
-  export default LandingLayout;
-  
+import Navbar from "@/components/navigation/navbar";
+import { Separator } from "@/components/ui/separator";
+
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+  return (
+    <main className="flex min-h-screen w-full flex-col items-center dark:bg-black/10">
+      <Navbar />
+      <Separator />
+      {children}
+    </main>
+  );
+};
+
+export default DashboardLayout;
