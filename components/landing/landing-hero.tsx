@@ -11,7 +11,7 @@ export const LandingHero = () => {
 
   return (
     <div className="font-bold py-36 text-center space-y-5">
-      <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl space-y-5 font-extrabold">
+      <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
         <h1>CheckIt - Web Application</h1>
         <div className="h-[60px] text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-600">
           <TypewriterComponent
