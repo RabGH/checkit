@@ -114,7 +114,12 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
           )}
           {tasks.length > 0 && (
             <>
-              <Progress className="rounded-none" value={progress} />
+              <Progress
+                className={cn(
+                  "rounded-none bg-gradient-to-r from-green-900 via-green-500 to-green-900"
+                )}
+                value={progress}
+              />
               <div className="p-4 gap-3 flex flex-col">
                 {tasks.map((task) => (
                   <TaskCard key={task.id} task={task} />

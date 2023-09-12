@@ -75,6 +75,7 @@ function CreateTaskDialog({
       });
       setOpen(false);
 
+      form.reset();
       router.refresh();
     } catch (error) {
       toast({
