@@ -9,11 +9,11 @@ export enum CollectionColors {
   Powder = "bg-gradient-to-r from-violet-200 to-pink-200",
   Ocean = "bg-gradient-to-r from-teal-400 to-blue-500",
   Sunshine = "bg-gradient-to-r from-yellow-300 to-orange-400",
-  Lavender = "bg-gradient-to-r from-purple-400 to-lavender-500",
+  Lavender = "bg-gradient-to-r from-purple-400 to-purple-900",
   Midnight = "bg-gradient-to-r from-indigo-800 to-blue-900",
   Grass = "bg-gradient-to-r from-green-400 to-lime-500",
   Fire = "bg-gradient-to-r from-red-600 to-yellow-400",
-  Sky = "bg-gradient-to-r from-blue-300 to-lightblue-400",
+  Sky = "bg-gradient-to-r from-sky-300 to-sky-700",
 }
 
 export type CollectionColor = keyof typeof CollectionColors;
