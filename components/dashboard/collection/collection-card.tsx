@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { CollectionColor, CollectionColors } from "@/util/constants";
@@ -65,6 +65,12 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
     }
   };
 
+  const tasksDone = useMemo(() => {
+    return collection.tasks.filter((task) => task.done).length;
+  }, [collection.tasks]);
+  const totalTasks = collection.tasks.length;
+  const progress = totalTasks === 0 ? 0 : (tasksDone / totalTasks) * 100;
+
   return (
     <>
       <CreateTaskDialog
@@ -82,7 +88,9 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
               CollectionColors[collection.color as CollectionColor]
             )}
           >
-            <span className="text-white font-bold">{collection.name}</span>
+            <span className="dark:text-black text-white font-bold text-lg">
+              {collection.name}
+            </span>
             {!isOpen && <CaretDownIcon className="h-6 w-6" />}
             {isOpen && <CaretUpIcon className="h-6 w-6" />}
           </Button>
@@ -106,7 +114,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
           )}
           {tasks.length > 0 && (
             <>
-              <Progress className="rounded-none" value={45} />
+              <Progress className="rounded-none" value={progress} />
               <div className="p-4 gap-3 flex flex-col">
                 {tasks.map((task) => (
                   <TaskCard key={task.id} task={task} />
