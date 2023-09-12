@@ -5,6 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import SadFace from "@/components/icons/sad-face";
 import CreateCollectionButton from "@/components/dashboard/collection/collection-create-button";
 import CollectionCard from "@/components/dashboard/collection/collection-card";
+import { clsx } from "clsx";
 
 export default async function CollectionList() {
   const user = await currentUser();
@@ -19,8 +20,8 @@ export default async function CollectionList() {
 
   if (collections.length === 0) {
     return (
-      <div className="flex flex-col gap-5">
-        <Alert>
+      <div className="flex flex-col gap-5 justify-center">
+        <Alert className="space-x-5">
           <SadFace />
           <AlertTitle>No Collections</AlertTitle>
           <AlertDescription>
