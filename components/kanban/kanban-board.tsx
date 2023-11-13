@@ -54,6 +54,16 @@ function KanbanBoard() {
     setColumns(newColumns);
   }
 
+  function createTask(columnId: Id) {
+    const newTask: Task = {
+      id: generateId(),
+      columnId,
+      content: `Task ${tasks.length + 1}`,
+    };
+
+    setTasks([...tasks, newTask]);
+  }
+
   function onDragStart(event: DragStartEvent) {
     console.log("Drag Start", event);
     if (event.active.data.current?.type === "Column") {
@@ -85,7 +95,7 @@ function KanbanBoard() {
   }
 
   return (
-    <ScrollArea className="mx-auto flex min-h-[60vh] items-center px-[40px]">
+    <ScrollArea className="mx-auto flex min-h-[65vh] items-center px-[40px]">
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
@@ -110,6 +120,8 @@ function KanbanBoard() {
                     column={col}
                     deleteColumn={deleteColumn}
                     updateColumn={updateColumn}
+                    createTask={createTask}
+                    tasks={tasks.filter(task => task.columnId === col.id)}
                   />
                 ))}
               </SortableContext>
@@ -123,6 +135,8 @@ function KanbanBoard() {
                 column={activeColumn}
                 deleteColumn={deleteColumn}
                 updateColumn={updateColumn}
+                createTask={createTask}
+                tasks={tasks.filter(task => task.columnId === col.id)}
               />
             )}
           </DragOverlay>,

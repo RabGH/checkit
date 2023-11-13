@@ -5,24 +5,28 @@ import { PlusCircledIcon, TrashIcon } from "@radix-ui/react-icons";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import { Column, Id } from "@/lib/types";
+import { Column, Id, Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import PlusIcon from "@/components/icons/plus-icon";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import KanbanTaskCard from "./kanban-task-card";
 
 interface ColumnContainer {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
-  createTask: (columnId: string) => void;
+  createTask: (columnId: Id) => void;
+  tasks: Task[];
 }
 
 function ColumnContainer({
   column,
   deleteColumn,
   updateColumn,
+  createTask,
+  tasks,
 }: ColumnContainer) {
   const [editMode, setEditMode] = useState(false);
 
@@ -52,7 +56,7 @@ function ColumnContainer({
       <Card
         ref={setNodeRef}
         style={style}
-        className="opacity-40 bg-rose-500/20 dark:bg-black w-[350px] h-[500px] max-h-[500px] rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-gray-900/5"
+        className="opacity-40 w-[350px] h-[500px] max-h-[500px] bg-rose-500/20 dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-gray-900/5"
       ></Card>
     );
   }
@@ -61,7 +65,7 @@ function ColumnContainer({
     <Card
       ref={setNodeRef}
       style={style}
-      className="dark:bg-black w-[350px] h-[500px] max-h-[500px] rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-gray-900/5"
+      className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-gray-900/5 hover:border-rose-500/50 transition duration-300 ease-in-out"
     >
       {/* Column title */}
       <div
@@ -99,7 +103,14 @@ function ColumnContainer({
         </Button>
       </div>
       {/* Column task container */}
-      <div className="flex flex-grow p-5">Content</div>
+      <ScrollArea className="flex flex-grow flex-col p-2">
+        <div className="space-y-2">
+          {tasks.map((task) => (
+            <KanbanTaskCard key={task.id} task={task} />
+          ))}
+        </div>
+        <ScrollBar orientation="vertical" className="text-rose-900" />
+      </ScrollArea>
       {/* Column footer */}
       <div className="flex items-center justify-start w-full">
         <Button

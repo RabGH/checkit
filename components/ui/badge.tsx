@@ -16,7 +16,7 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
         kanban:
-          "bg-white border-rose-500 border dark:bg-black dark:text-white dark:hover:bg-rose-500 dark:hover:text-white hover:bg-rose-500 hover:text-white",
+          "bg-white border-rose-500 border dark:bg-black dark:text-white dark:hover:bg-rose-500 dark:hover:text-white hover:bg-rose-500 hover:text-white transition duration-300 ease-in-out",
       },
     },
     defaultVariants: {
