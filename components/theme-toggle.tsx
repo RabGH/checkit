@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useMount } from "@/hooks/mount-hook";
 
+// use mount might not be needed here
+
 export function DarkMode() {
   const { setTheme } = useTheme();
   const mount = useMount();
