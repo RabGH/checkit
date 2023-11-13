@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { TrashIcon } from "@radix-ui/react-icons";
+import { PlusCircledIcon, TrashIcon } from "@radix-ui/react-icons";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -10,11 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import PlusIcon from "@/components/icons/plus-icon";
 
 interface ColumnContainer {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
+  createTask: (columnId: string) => void;
 }
 
 function ColumnContainer({
@@ -99,7 +101,17 @@ function ColumnContainer({
       {/* Column task container */}
       <div className="flex flex-grow p-5">Content</div>
       {/* Column footer */}
-      <div className="p-5">footer</div>
+      <div className="flex items-center justify-start w-full">
+        <Button
+          variant={"kanban"}
+          onClick={() => {
+            createTask(column.id);
+          }}
+          className="flex gap-2 justify-start items-center p-2 border-none w-full rounded-t-none active:bg-rose-950"
+        >
+          <PlusCircledIcon /> Add Task
+        </Button>
+      </div>
     </Card>
   );
 }

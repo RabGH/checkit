@@ -15,16 +15,19 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
-import { Column, Id } from "@/lib/types";
+import { Column, Id, Task } from "@/lib/types";
 import { generateId } from "@/lib/utils";
 import ColumnContainer from "@/components/kanban/column-container";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
 
-  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 3 } })
@@ -82,14 +85,14 @@ function KanbanBoard() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-[40px]">
+    <ScrollArea className="mx-auto flex min-h-[60vh] items-center px-[40px]">
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
         <div className="m-auto flex gap-4">
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4">
             <Button
               onClick={() => {
                 createNewColumn();
@@ -99,16 +102,18 @@ function KanbanBoard() {
             >
               <PlusCircledIcon /> Add Column
             </Button>
-            <SortableContext items={columnsId}>
-              {columns.map((col) => (
-                <ColumnContainer
-                  key={col.id}
-                  column={col}
-                  deleteColumn={deleteColumn}
-                  updateColumn={updateColumn}
-                />
-              ))}
-            </SortableContext>
+            <div className="flex flex-row gap-4">
+              <SortableContext items={columnsId}>
+                {columns.map((col) => (
+                  <ColumnContainer
+                    key={col.id}
+                    column={col}
+                    deleteColumn={deleteColumn}
+                    updateColumn={updateColumn}
+                  />
+                ))}
+              </SortableContext>
+            </div>
           </div>
         </div>
         {createPortal(
@@ -124,7 +129,8 @@ function KanbanBoard() {
           document.body
         )}
       </DndContext>
-    </div>
+      <ScrollBar orientation="horizontal" className="text-rose-900" />
+    </ScrollArea>
   );
 }
 
