@@ -21,6 +21,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         premium:
           "bg-gradient-to-r from-pink-400 via-pink-500 to-pink-700 text-white border-0",
+        kanban:
+          "bg-white border-rose-500 border dark:bg-black dark:text-white dark:hover:bg-rose-500 dark:hover:text-white hover:bg-rose-500 hover:text-white",
       },
       size: {
         default: "h-9 px-4 py-2",
