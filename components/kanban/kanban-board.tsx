@@ -21,15 +21,16 @@ import ColumnContainer from "@/components/kanban/column-container";
 import KanbanTaskCard from "@/components/kanban/kanban-task-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { defaultCols, defaultTasks } from "./kanban-demo";
 
 function KanbanBoard() {
-  const [columns, setColumns] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>(defaultCols);
+
+  const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-
-  const [tasks, setTasks] = useState<Task[]>([]);
 
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
