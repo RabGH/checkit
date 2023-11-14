@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { PlusCircledIcon, TrashIcon } from "@radix-ui/react-icons";
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import { Column, Id, Task } from "@/lib/types";
@@ -17,7 +17,10 @@ interface ColumnContainer {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
+
   createTask: (columnId: Id) => void;
+  updateTask: (id: Id, content: string) => void;
+  deleteTask: (id: Id) => void;
   tasks: Task[];
 }
 
@@ -27,8 +30,14 @@ function ColumnContainer({
   updateColumn,
   createTask,
   tasks,
+  deleteTask,
+  updateTask,
 }: ColumnContainer) {
   const [editMode, setEditMode] = useState(false);
+
+  const tasksIds = useMemo(() => {
+    return tasks.map((task) => task.id);
+  }, [tasks]);
 
   const {
     setNodeRef,
@@ -56,16 +65,18 @@ function ColumnContainer({
       <Card
         ref={setNodeRef}
         style={style}
-        className="opacity-40 w-[350px] h-[500px] max-h-[500px] bg-rose-500/20 dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-gray-900/5"
-      ></Card>
+        className="opacity-40 w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/50 bg-rose-500/20 dark:bg-rose-900/20"
+      />
     );
   }
+
+  console.log("Tasks:", tasks);
 
   return (
     <Card
       ref={setNodeRef}
       style={style}
-      className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-gray-900/5 hover:border-rose-500/50 transition duration-300 ease-in-out"
+      className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-rose-900/5 hover:border-rose-500/50 transition duration-300 ease-in-out"
     >
       {/* Column title */}
       <div
@@ -79,7 +90,7 @@ function ColumnContainer({
             variant={"kanban"}
             className="flex justify-center items-center"
           >
-            0
+            {tasks.length}
           </Badge>
           {!editMode && column.title}
           {editMode && (
@@ -94,7 +105,7 @@ function ColumnContainer({
                 if (e.key !== "Enter") return;
                 setEditMode(false);
               }}
-              className="text-black focus-visible:ring-rose-500 focus-visible:bg-white border-rose-500/50 bg-white/80"
+              className="text-black dark:text-white focus-visible:text-black focus-visible:ring-rose-500 dark:focus-visible:bg-black"
             />
           )}
         </div>
@@ -103,13 +114,23 @@ function ColumnContainer({
         </Button>
       </div>
       {/* Column task container */}
-      <ScrollArea className="flex flex-grow flex-col p-2">
+      <ScrollArea
+        className="flex flex-grow flex-col p-2"
+        thumbClassName="bg-rose-900"
+      >
         <div className="space-y-2">
-          {tasks.map((task) => (
-            <KanbanTaskCard key={task.id} task={task} />
-          ))}
+          <SortableContext items={tasksIds}>
+            {tasks.map((task) => (
+              <KanbanTaskCard
+                key={task.id}
+                task={task}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+              />
+            ))}
+          </SortableContext>
         </div>
-        <ScrollBar orientation="vertical" className="text-rose-900" />
+        <ScrollBar orientation="vertical" />
       </ScrollArea>
       {/* Column footer */}
       <div className="flex items-center justify-start w-full">
