@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useTransition } from "react";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import {
   DndContext,
@@ -21,13 +21,14 @@ import ColumnContainer from "@/components/kanban/column-container";
 import KanbanTaskCard from "@/components/kanban/kanban-task-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
 import {
   CreateKanbanColumn,
   DeleteKanbanColumn,
   getKanbanColumns,
 } from "@/actions/kanban-column";
 import { getKanbanTasks } from "@/actions/kanban-task";
-import { toast } from "@/components/ui/use-toast";
 
 interface KanbanBoardProps {
   userId: string;
@@ -37,6 +38,8 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
   const [columns, setColumns] = useState<Column[]>([]);
 
   const [tasks, setTasks] = useState<Task[]>([]);
+
+  const [isLoading, startTransition] = useTransition();
 
   // Fetch initial data using actions when the component mounts
   useEffect(() => {
@@ -245,7 +248,7 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
           <div className="flex flex-col gap-4">
             <Button
               onClick={() => {
-                createNewColumn();
+                startTransition(() => createNewColumn());
               }}
               variant={"kanban"}
               className=" justify-start w-[200px] gap-2"
@@ -253,22 +256,27 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
               <PlusCircledIcon /> Add Column
             </Button>
             <div className="flex flex-row gap-4">
-              <SortableContext items={columnsId}>
-                {columns.map((col) => (
-                  <ColumnContainer
-                    key={col.id}
-                    column={col}
-                    deleteColumn={deleteColumn}
-                    updateColumn={updateColumn}
-                    createTask={createTask}
-                    deleteTask={deleteTask}
-                    tasks={tasks.filter(
-                      (task) => task.kanbanColumnId === col.id
-                    )}
-                    updateTask={updateTask}
-                  />
-                ))}
-              </SortableContext>
+              {isLoading && (
+                <Card className="opacity-40 w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/50 bg-rose-500/20 dark:bg-rose-900/20" />
+              )}
+              {!isLoading && (
+                <SortableContext items={columnsId}>
+                  {columns.map((col) => (
+                    <ColumnContainer
+                      key={col.id}
+                      column={col}
+                      deleteColumn={deleteColumn}
+                      updateColumn={updateColumn}
+                      createTask={createTask}
+                      deleteTask={deleteTask}
+                      tasks={tasks.filter(
+                        (task) => task.kanbanColumnId === col.id
+                      )}
+                      updateTask={updateTask}
+                    />
+                  ))}
+                </SortableContext>
+              )}
             </div>
           </div>
         </div>
