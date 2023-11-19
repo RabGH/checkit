@@ -34,3 +34,23 @@ model Task {
   collectionId Int
   Collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 }
+
+model KanbanTask {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  kanbanColumnId Int
+  KanbanColumn   KanbanColumn @relation(fields: [kanbanColumnId], references: [id], onDelete: Cascade)
+}
+
+model KanbanColumn {
+  id        Int          @id @default(autoincrement())
+  title     String
+  userId    String
+  createdAt DateTime     @default(now())
+  tasks     KanbanTask[]
+
+  @@unique([title, userId])
+}

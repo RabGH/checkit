@@ -9,7 +9,7 @@ export const LandingContent = () => {
     <div className="px-5 pb-10">
       <div className="text-center mb-10 flex flex-col gap-6 items-center justify-center">
         <div>
-          <h2 className="text-3xl text-white font-bold mb-2">
+          <h2 className="text-3xl dark:text-white font-bold mb-2">
             Todo Board Application
           </h2>
           <p className="text-zinc-400 text-xs md:text-sm font-normal">
@@ -18,7 +18,7 @@ export const LandingContent = () => {
         </div>
         <Separator className="w-1/2" />
         <div>
-          <h2 className="text-3xl text-white font-bold mb-2">
+          <h2 className="text-3xl dark:text-white font-bold mb-2">
             Kanban Board Application
           </h2>
           <p className="text-zinc-400 text-xs md:text-sm font-normal">

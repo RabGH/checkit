@@ -8,7 +8,7 @@ export default async function WelcomeMsg() {
   }
 
   return (
-    <div className="flex w-full mb-12">
+    <div className="flex w-full mb-10">
       <h2 className="text-4xl font-bold">
         Welcome, <br /> {user.firstName} {user.lastName}
       </h2>
