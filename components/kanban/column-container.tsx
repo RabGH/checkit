@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { PlusCircledIcon, TrashIcon } from "@radix-ui/react-icons";
+import React, { useMemo, useState, useTransition } from "react";
+import { PlusCircledIcon, ReloadIcon, TrashIcon } from "@radix-ui/react-icons";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -34,6 +34,7 @@ function ColumnContainer({
   updateTask,
 }: ColumnContainer) {
   const [editMode, setEditMode] = useState(false);
+  const [isLoading, startTransition] = useTransition();
 
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
@@ -78,72 +79,92 @@ function ColumnContainer({
       style={style}
       className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-rose-900/5 hover:border-rose-500/50 transition duration-300 ease-in-out"
     >
+      {isLoading && (
+        <div className="flex items-center justify-center h-full w-full">
+          <ReloadIcon className="animate-spin w-8 h-8 text-rose-500" />
+          <div className="ml-2">Deleting...</div>
+        </div>
+      )}
+
       {/* Column title */}
-      <div
-        {...attributes}
-        {...listeners}
-        onClick={() => setEditMode(true)}
-        className="flex items-center justify-between dark:bg-white/10 bg-rose-500/20 text-lg h-[60px] cursor-grab rounded-t-lg p-3 font-regular dark:border-black border-2 border-white hover:bg-rose-500/10 dark:hover:bg-white/5"
-      >
-        <div className="flex gap-2">
-          <Badge
-            variant={"kanban"}
-            className="flex justify-center items-center"
-          >
-            {tasks.length}
-          </Badge>
-          {!editMode && column.title}
-          {editMode && (
-            <Input
-              value={column.title}
-              onChange={(e) => updateColumn(column.id, e.target.value)}
-              autoFocus
-              onBlur={() => {
-                setEditMode(false);
-              }}
-              onKeyDown={(e) => {
-                if (e.key !== "Enter") return;
-                setEditMode(false);
-              }}
-              className="text-black dark:text-white focus-visible:text-black focus-visible:ring-rose-500 dark:focus-visible:bg-black"
-            />
-          )}
-        </div>
-        <Button onClick={() => deleteColumn(column.id)} variant={"kanban"}>
-          <TrashIcon />
-        </Button>
-      </div>
-      {/* Column task container */}
-      <ScrollArea
-        className="flex flex-grow flex-col p-2"
-        thumbClassName="bg-rose-900"
-      >
-        <div className="space-y-2">
-          <SortableContext items={tasksIds}>
-            {tasks.map((task) => (
-              <KanbanTaskCard
-                key={task.id}
-                task={task}
-                deleteTask={deleteTask}
-                updateTask={updateTask}
-              />
-            ))}
-          </SortableContext>
-        </div>
-        <ScrollBar orientation="vertical" />
-      </ScrollArea>
-      {/* Column footer */}
-      <div className="flex items-center justify-start w-full">
-        <Button
-          variant={"kanban"}
-          onClick={() => {
-            createTask(column.id);
-          }}
-          className="flex gap-2 justify-start items-center p-2 border-none w-full rounded-t-none active:bg-rose-950"
+      {!isLoading && (
+        <div
+          {...attributes}
+          {...listeners}
+          onClick={() => setEditMode(true)}
+          className="flex items-center justify-between dark:bg-white/10 bg-rose-500/20 text-lg h-[60px] cursor-grab rounded-t-lg p-3 font-regular dark:border-black border-2 border-white hover:bg-rose-500/10 dark:hover:bg-white/5"
         >
-          <PlusCircledIcon /> Add Task
-        </Button>
-      </div>
+          <div className="flex gap-2">
+            <Badge
+              variant={"kanban"}
+              className="flex justify-center items-center"
+            >
+              {tasks.length}
+            </Badge>
+            {!editMode && column.title}
+            {editMode && (
+              <Input
+                value={column.title}
+                onChange={(e) => updateColumn(column.id, e.target.value)}
+                autoFocus
+                onBlur={() => {
+                  setEditMode(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter") return;
+                  setEditMode(false);
+                }}
+                className="text-black dark:text-white focus-visible:text-black focus-visible:ring-rose-500 dark:focus-visible:bg-black"
+              />
+            )}
+          </div>
+          <Button
+            onClick={() => {
+              startTransition(() => deleteColumn(column.id));
+            }}
+            variant={"kanban"}
+          >
+            <TrashIcon />
+          </Button>
+        </div>
+      )}
+
+      {/* Column task container */}
+      {!isLoading && (
+        <ScrollArea
+          className="flex flex-grow flex-col p-2"
+          thumbClassName="bg-rose-900"
+        >
+          <div className="space-y-2">
+            <SortableContext items={tasksIds}>
+              {tasks.map((task) => (
+                <KanbanTaskCard
+                  key={task.id}
+                  task={task}
+                  deleteTask={deleteTask}
+                  updateTask={updateTask}
+                />
+              ))}
+            </SortableContext>
+          </div>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      )}
+
+      {/* Column footer */}
+      {!isLoading && (
+        <div className="flex items-center justify-start w-full">
+          <Button
+            variant={"kanban"}
+            onClick={() => {
+              createTask(column.id);
+            }}
+            className="flex gap-2 justify-start items-center p-2 border-none w-full rounded-t-none active:bg-rose-950"
+          >
+            <PlusCircledIcon /> Add Task
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }

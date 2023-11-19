@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import {
   DndContext,
@@ -21,12 +21,49 @@ import ColumnContainer from "@/components/kanban/column-container";
 import KanbanTaskCard from "@/components/kanban/kanban-task-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { defaultCols, defaultTasks } from "./kanban-demo";
+import {
+  CreateKanbanColumn,
+  DeleteKanbanColumn,
+  getKanbanColumns,
+} from "@/actions/kanban-column";
+import { getKanbanTasks } from "@/actions/kanban-task";
+import { toast } from "@/components/ui/use-toast";
 
-function KanbanBoard() {
-  const [columns, setColumns] = useState<Column[]>(defaultCols);
+interface KanbanBoardProps {
+  userId: string;
+}
 
-  const [tasks, setTasks] = useState<Task[]>(defaultTasks);
+function KanbanBoard({ userId }: KanbanBoardProps) {
+  const [columns, setColumns] = useState<Column[]>([]);
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  // Fetch initial data using actions when the component mounts
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const fetchedColumns = await getKanbanColumns(userId);
+        const convertedColumns = fetchedColumns.map((column) => ({
+          ...column,
+          createdAt: new Date(column.createdAt),
+        }));
+
+        const fetchedTasks = await getKanbanTasks(userId);
+        setColumns(convertedColumns);
+        setTasks(fetchedTasks);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle error, e.g., display a toast
+        toast({
+          title: "Error",
+          description: "Error fetching data. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    }
+
+    fetchData();
+  }, [userId]);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
@@ -38,20 +75,50 @@ function KanbanBoard() {
     useSensor(PointerSensor, { activationConstraint: { distance: 3 } })
   );
 
-  function createNewColumn() {
-    const columnToAdd: Column = {
-      id: generateId(),
-      title: `Column ${columns.length + 1}`,
-    };
-    setColumns([...columns, columnToAdd]);
+  async function createNewColumn() {
+    try {
+      const columnToAdd: Column = await CreateKanbanColumn({
+        id: generateId(),
+        title: `Column ${columns.length + 1}`,
+        userId: userId,
+      });
+      toast({
+        title: "Success",
+        description: `Column created. ${columnToAdd.createdAt?.toLocaleDateString(
+          "en-US"
+        )}`,
+        variant: "default",
+      });
+      setColumns([...columns, columnToAdd]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    }
   }
 
-  function deleteColumn(id: Id) {
-    const filteredColumns = columns.filter((col) => col.id !== id);
-    setColumns(filteredColumns);
+  async function deleteColumn(id: Id) {
+    try {
+      await DeleteKanbanColumn(Number(id));
+      toast({
+        title: "Success",
+        description: "Column deleted.",
+        variant: "default",
+      });
+      const filteredColumns = columns.filter((col) => col.id !== id);
+      setColumns(filteredColumns);
 
-    const newTasks = tasks.filter((task) => task.columnId !== id);
-    setTasks(newTasks);
+      const newTasks = tasks.filter((task) => task.kanbanColumnId !== id);
+      setTasks(newTasks);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    }
   }
 
   function updateColumn(id: Id, title: string) {
@@ -63,10 +130,11 @@ function KanbanBoard() {
     setColumns(newColumns);
   }
 
-  function createTask(columnId: Id) {
+  function createTask(kanbanColumnId: Id) {
     const newTask: Task = {
+      userId: userId,
       id: generateId(),
-      columnId,
+      kanbanColumnId,
       content: `Task ${tasks.length + 1}`,
     };
 
@@ -143,7 +211,8 @@ function KanbanBoard() {
         );
         const overTaskIndex = tasks.findIndex((task) => task.id === overTaskId);
 
-        tasks[activeTaskIndex].columnId = tasks[overTaskIndex].columnId;
+        tasks[activeTaskIndex].kanbanColumnId =
+          tasks[overTaskIndex].kanbanColumnId;
 
         return arrayMove(tasks, activeTaskIndex, overTaskIndex);
       });
@@ -157,7 +226,7 @@ function KanbanBoard() {
           (task) => task.id === activeTaskId
         );
 
-        tasks[activeTaskIndex].columnId = overTaskId;
+        tasks[activeTaskIndex].kanbanColumnId = Number(overTaskId);
 
         return arrayMove(tasks, activeTaskIndex, activeTaskIndex);
       });
@@ -193,7 +262,9 @@ function KanbanBoard() {
                     updateColumn={updateColumn}
                     createTask={createTask}
                     deleteTask={deleteTask}
-                    tasks={tasks.filter((task) => task.columnId === col.id)}
+                    tasks={tasks.filter(
+                      (task) => task.kanbanColumnId === col.id
+                    )}
                     updateTask={updateTask}
                   />
                 ))}
@@ -211,7 +282,7 @@ function KanbanBoard() {
                 createTask={createTask}
                 deleteTask={deleteTask}
                 tasks={tasks.filter(
-                  (task) => task.columnId === activeColumn.id
+                  (task) => task.kanbanColumnId === activeColumn.id
                 )}
                 updateTask={updateTask}
               />

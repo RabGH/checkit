@@ -54,3 +54,14 @@ export async function UpdateKanbanColumn(id: number, title: string) {
     },
   });
 }
+
+export async function getKanbanColumns(userId: string) {
+  return await prismadb.kanbanColumn.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      tasks: true,
+    },
+  });
+}

@@ -63,3 +63,14 @@ export async function UpdateKanbanTask(
     data: updateData,
   });
 }
+
+export async function getKanbanTasks(userId: string) {
+  return await prismadb.kanbanTask.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      KanbanColumn: true,
+    },
+  });
+}
