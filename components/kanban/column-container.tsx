@@ -34,7 +34,8 @@ function ColumnContainer({
   updateTask,
 }: ColumnContainer) {
   const [editMode, setEditMode] = useState(false);
-  const [isLoading, startTransition] = useTransition();
+  const [isColumnDeleting, startDeleteTransition] = useTransition();
+  const [isTaskCreating, startTaskCreationTransition] = useTransition();
 
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
@@ -79,15 +80,14 @@ function ColumnContainer({
       style={style}
       className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-rose-900/5 hover:border-rose-500/50 transition duration-300 ease-in-out"
     >
-      {isLoading && (
+      {isColumnDeleting && (
         <div className="flex items-center justify-center h-full w-full">
           <ReloadIcon className="animate-spin w-8 h-8 text-rose-500" />
           <div className="ml-2">Deleting...</div>
         </div>
       )}
-
       {/* Column title */}
-      {!isLoading && (
+      {!isColumnDeleting && (
         <div
           {...attributes}
           {...listeners}
@@ -120,7 +120,7 @@ function ColumnContainer({
           </div>
           <Button
             onClick={() => {
-              startTransition(() => deleteColumn(column.id));
+              startDeleteTransition(() => deleteColumn(column.id));
             }}
             variant={"kanban"}
           >
@@ -130,11 +130,20 @@ function ColumnContainer({
       )}
 
       {/* Column task container */}
-      {!isLoading && (
+
+      {!isColumnDeleting && (
         <ScrollArea
           className="flex flex-grow flex-col p-2"
           thumbClassName="bg-rose-900"
         >
+          {isTaskCreating && (
+            <Card className="mb-2 h-[100px] min-h-[100px] w-full p-2 flex flex-col rounded-lg border border-rose-500 dark:bg-rose-900 dark:opacity-20 bg-rose-500/5">
+              <div className="flex items-center justify-center h-full w-full">
+                <ReloadIcon className="animate-spin w-8 h-8 text-rose-500" />
+                <div className="ml-2">Creating Task...</div>
+              </div>
+            </Card>
+          )}
           <div className="space-y-2">
             <SortableContext items={tasksIds}>
               {tasks.map((task) => (
@@ -152,12 +161,12 @@ function ColumnContainer({
       )}
 
       {/* Column footer */}
-      {!isLoading && (
+      {!isColumnDeleting && !isTaskCreating && (
         <div className="flex items-center justify-start w-full">
           <Button
             variant={"kanban"}
             onClick={() => {
-              createTask(column.id);
+              startTaskCreationTransition(() => createTask(column.id));
             }}
             className="flex gap-2 justify-start items-center p-2 border-none w-full rounded-t-none active:bg-rose-950"
           >
