@@ -56,6 +56,11 @@ export async function UpdateKanbanColumn(id: number, title: string) {
 }
 
 export async function getKanbanColumns(userId: string) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
   return await prismadb.kanbanColumn.findMany({
     where: {
       userId: userId,
@@ -63,5 +68,25 @@ export async function getKanbanColumns(userId: string) {
     include: {
       tasks: true,
     },
+    orderBy: {
+      order: "asc",
+    },
   });
+}
+
+export async function updateKanbanColumnOrder(newColumnOrder: number[]) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  for (let i = 0; i < newColumnOrder.length; i++) {
+    const id = newColumnOrder[i];
+
+    await prismadb.kanbanColumn.update({
+      where: { id },
+      data: { order: i },
+    });
+  }
 }

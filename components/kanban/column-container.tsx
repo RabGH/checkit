@@ -72,7 +72,7 @@ function ColumnContainer({
     );
   }
 
-  console.log("Tasks:", tasks);
+  // console.log("Tasks:", tasks);
 
   return (
     <Card

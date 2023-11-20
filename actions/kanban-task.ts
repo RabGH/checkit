@@ -27,10 +27,12 @@ export async function CreateKanbanTask(data: CreateKanbanTaskValidatorType) {
 
 export async function DeleteKanbanTask(id: number) {
   const user = await currentUser();
+
   if (!user) {
     throw new Error("User not found");
   }
-  return await prismadb.task.delete({
+
+  return await prismadb.kanbanTask.delete({
     where: {
       id: id,
       userId: user.id,

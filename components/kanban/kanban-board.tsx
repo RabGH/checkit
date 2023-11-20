@@ -27,8 +27,13 @@ import {
   CreateKanbanColumn,
   DeleteKanbanColumn,
   getKanbanColumns,
+  updateKanbanColumnOrder,
 } from "@/actions/kanban-column";
-import { CreateKanbanTask, getKanbanTasks } from "@/actions/kanban-task";
+import {
+  CreateKanbanTask,
+  DeleteKanbanTask,
+  getKanbanTasks,
+} from "@/actions/kanban-task";
 
 interface KanbanBoardProps {
   userId: string;
@@ -165,9 +170,23 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
     setTasks(newTasks);
   }
 
-  function deleteTask(id: Id) {
-    const newTasks = tasks.filter((task) => task.id !== id);
-    setTasks(newTasks);
+  async function deleteTask(id: Id) {
+    try {
+      await DeleteKanbanTask(Number(id));
+      toast({
+        title: "Success",
+        description: "Task deleted.",
+        variant: "default",
+      });
+      const newTasks = tasks.filter((task) => task.id !== id);
+      setTasks(newTasks);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    }
   }
 
   function onDragStart(event: DragStartEvent) {
@@ -202,7 +221,40 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
         (col) => col.id === overColumnId
       );
 
-      return arrayMove(columns, activeColumnIndex, overColumnIndex);
+      const newColumnOrder = arrayMove(
+        columns,
+        activeColumnIndex,
+        overColumnIndex
+      ).map((col) => col.id);
+
+      const newColumns: Column[] = [];
+      for (let i = 0; i < newColumnOrder.length; i++) {
+        const column = columns.find((col) => col.id === newColumnOrder[i]);
+        if (column) {
+          newColumns.push(column);
+        }
+      }
+
+      startTransition(() => {
+        updateKanbanColumnOrder(newColumnOrder)
+          .then(() => {
+            toast({
+              title: "Success",
+              description: "Column order updated.",
+              variant: "default",
+            });
+          })
+
+          .catch((error) => {
+            toast({
+              title: "Error",
+              description: "Something went wrong. Please try again later.",
+              variant: "destructive",
+            });
+          });
+      });
+
+      return newColumns;
     });
   }
 
