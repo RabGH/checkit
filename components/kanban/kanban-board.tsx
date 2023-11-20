@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState, useTransition } from "react";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { PlusCircledIcon, ReloadIcon } from "@radix-ui/react-icons";
 import {
   DndContext,
   DragEndEvent,
@@ -256,9 +256,18 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
               <PlusCircledIcon /> Add Column
             </Button>
             <div className="flex flex-row gap-4">
-              {isLoading && (
-                <Card className="opacity-40 w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/50 bg-rose-500/20 dark:bg-rose-900/20" />
-              )}
+              {isLoading &&
+                columns.map((col) => (
+                  <Card
+                    key={col.id}
+                    className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/50 bg-rose-500/20 dark:bg-rose-900/20"
+                  >
+                    <div className="flex items-center justify-center h-full w-full">
+                      <ReloadIcon className="animate-spin w-8 h-8 text-rose-500" />
+                      <div className="ml-2">Creating...</div>
+                    </div>
+                  </Card>
+                ))}
               {!isLoading && (
                 <SortableContext items={columnsId}>
                   {columns.map((col) => (
@@ -280,31 +289,32 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
             </div>
           </div>
         </div>
-        {createPortal(
-          <DragOverlay>
-            {activeColumn && (
-              <ColumnContainer
-                column={activeColumn}
-                deleteColumn={deleteColumn}
-                updateColumn={updateColumn}
-                createTask={createTask}
-                deleteTask={deleteTask}
-                tasks={tasks.filter(
-                  (task) => task.kanbanColumnId === activeColumn.id
-                )}
-                updateTask={updateTask}
-              />
-            )}
-            {activeTask && (
-              <KanbanTaskCard
-                task={activeTask}
-                deleteTask={deleteTask}
-                updateTask={updateTask}
-              />
-            )}
-          </DragOverlay>,
-          document.body
-        )}
+        {typeof window !== "undefined" &&
+          createPortal(
+            <DragOverlay>
+              {activeColumn && (
+                <ColumnContainer
+                  column={activeColumn}
+                  deleteColumn={deleteColumn}
+                  updateColumn={updateColumn}
+                  createTask={createTask}
+                  deleteTask={deleteTask}
+                  tasks={tasks.filter(
+                    (task) => task.kanbanColumnId === activeColumn.id
+                  )}
+                  updateTask={updateTask}
+                />
+              )}
+              {activeTask && (
+                <KanbanTaskCard
+                  task={activeTask}
+                  deleteTask={deleteTask}
+                  updateTask={updateTask}
+                />
+              )}
+            </DragOverlay>,
+            document.body
+          )}
       </DndContext>
       <ScrollBar orientation="horizontal" className="text-rose-900" />
     </ScrollArea>

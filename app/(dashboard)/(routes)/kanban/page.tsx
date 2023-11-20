@@ -3,7 +3,8 @@ import { Suspense } from "react";
 
 import WelcomeMsg from "@/components/dashboard/welcome";
 import WelcomeMsgFallback from "@/components/dashboard/welcome-fallback";
-import KanbanBoard from "@/components/kanban/kanban-board";
+
+import KanbanProvider from "@/components/kanban/kanban-provider";
 
 const KanbanBoardPage = () => {
   return (
@@ -11,8 +12,9 @@ const KanbanBoardPage = () => {
       <Suspense fallback={<WelcomeMsgFallback />}>
         <WelcomeMsg />
       </Suspense>
-
-      <KanbanBoard />
+      <Suspense fallback={<div>Loading columns...</div>}>
+        <KanbanProvider />
+      </Suspense>
     </>
   );
 };
