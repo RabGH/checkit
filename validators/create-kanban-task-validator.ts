@@ -6,7 +6,6 @@ export const CreateKanbanTaskValidator = z.object({
     message: "Task content must be at least 3 characters",
   }),
   id: z.number(),
-  userId: z.string(),
 });
 
 export type CreateKanbanTaskValidatorType = z.infer<

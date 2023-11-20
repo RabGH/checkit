@@ -33,10 +33,11 @@ import {
   CreateKanbanTask,
   DeleteKanbanTask,
   getKanbanTasks,
+  updateKanbanTaskOrder,
 } from "@/actions/kanban-task";
 
 interface KanbanBoardProps {
-  userId: string;
+  userId: number;
 }
 
 function KanbanBoard({ userId }: KanbanBoardProps) {
@@ -50,13 +51,13 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const fetchedColumns = await getKanbanColumns(userId);
+        const fetchedColumns = await getKanbanColumns();
         const convertedColumns = fetchedColumns.map((column) => ({
           ...column,
           createdAt: new Date(column.createdAt),
         }));
 
-        const fetchedTasks = await getKanbanTasks(userId);
+        const fetchedTasks = await getKanbanTasks();
         setColumns(convertedColumns);
         setTasks(fetchedTasks);
       } catch (error) {
@@ -87,7 +88,6 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
       const columnToAdd: Column = await CreateKanbanColumn({
         id: generateId(),
         title: `Column ${columns.length + 1}`,
-        userId: userId,
       });
       toast({
         title: "Success",
@@ -143,7 +143,6 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
         id: generateId(),
         kanbanColumnId,
         content: `Task ${tasks.length + 1}`,
-        userId: userId,
       });
       toast({
         title: "Success",
@@ -207,10 +206,14 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
     const { active, over } = event;
     if (!over) return;
 
+    // const activeTaskId = active.id;
+    // const isActiveTask = active.data.current?.type === "Task";
+
     const activeColumnId = active.id;
     const overColumnId = over.id;
 
     if (activeColumnId === overColumnId) return;
+    // if (!isActiveTask) return;
 
     setColumns((columns) => {
       const activeColumnIndex = columns.findIndex(
@@ -245,6 +248,31 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
             });
           })
 
+        //   .catch((error) => {
+        //     toast({
+        //       title: "Error",
+        //       description: "Something went wrong. Please try again later.",
+        //       variant: "destructive",
+        //     });
+        //   });
+
+        // const newTaskOrder = tasks.findIndex(
+        //   (task) => task.id === activeTaskId
+        // );
+        // const newColumnId = tasks[newTaskOrder].kanbanColumnId;
+
+        // updateKanbanTaskOrder(
+        //   Number(activeTaskId),
+        //   newTaskOrder,
+        //   Number(newColumnId)
+        // )
+        //   .then(() => {
+        //     toast({
+        //       title: "Success",
+        //       description: "Task order and column updated.",
+        //       variant: "default",
+        //     });
+        //   })
           .catch((error) => {
             toast({
               title: "Error",

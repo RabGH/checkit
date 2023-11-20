@@ -66,13 +66,48 @@ export async function UpdateKanbanTask(
   });
 }
 
-export async function getKanbanTasks(userId: string) {
+export async function getKanbanTasks() {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
   return await prismadb.kanbanTask.findMany({
     where: {
-      userId: userId,
+      userId: user.id,
     },
     include: {
       KanbanColumn: true,
+    },
+    orderBy: {
+      order: "asc",
+    },
+  });
+}
+
+export async function updateKanbanTaskOrder(
+  taskId: number,
+  newTaskOrder: number,
+  newColumnId: number
+) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return await prisma?.kanbanTask.update({
+    where: {
+      id: taskId,
+      userId: user.id,
+    },
+    data: {
+      order: newTaskOrder,
+      KanbanColumn: {
+        connect: {
+          id: newColumnId,
+        },
+      },
     },
   });
 }

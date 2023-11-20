@@ -3,15 +3,15 @@ export type Id = string | number;
 export type Column = {
   id: number;
   title: string;
-  userId: Id;
+  userId: string;
   createdAt?: Date;
   tasks?: Task[];
 };
 
 export type Task = {
-  id: Id;
+  id: number;
   content: string;
-  userId: Id;
+  userId: string;
   createdAt?: Date;
-  kanbanColumnId: Id;
+  kanbanColumnId: number;
 };

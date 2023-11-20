@@ -55,7 +55,7 @@ export async function UpdateKanbanColumn(id: number, title: string) {
   });
 }
 
-export async function getKanbanColumns(userId: string) {
+export async function getKanbanColumns() {
   const user = await currentUser();
 
   if (!user) {
@@ -63,7 +63,7 @@ export async function getKanbanColumns(userId: string) {
   }
   return await prismadb.kanbanColumn.findMany({
     where: {
-      userId: userId,
+      userId: user.id,
     },
     include: {
       tasks: true,

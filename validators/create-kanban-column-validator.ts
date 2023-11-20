@@ -5,7 +5,6 @@ export const CreateKanbanColumnValidator = z.object({
     message: "Title must be at least 1 character(s)",
   }),
   id: z.number(),
-  userId: z.string(),
 });
 
 export type CreateKanbanColumnValidatorType = z.infer<
