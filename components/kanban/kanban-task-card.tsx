@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { TrashIcon } from "@radix-ui/react-icons";
+import React, { useState, useTransition } from "react";
+import { ReloadIcon, TrashIcon } from "@radix-ui/react-icons";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -23,6 +23,7 @@ const KanbanTaskCard = ({
   updateTask,
 }: KanbanTaskCardProps) => {
   const [editMode, setEditMode] = useState(false);
+  const [isTaskDeleting, startTaskDeletionTransition] = useTransition();
 
   const {
     setNodeRef,
@@ -58,6 +59,21 @@ const KanbanTaskCard = ({
   const toggleEditMode = () => {
     setEditMode((prev) => !prev);
   };
+
+  const handleDeleteTask = () => {
+    startTaskDeletionTransition(() => deleteTask(task.id));
+  };
+
+  if (isTaskDeleting) {
+    return (
+      <Card className="mb-2 h-[100px] min-h-[100px] w-full p-2 flex flex-col rounded-lg border border-rose-500 dark:bg-rose-900 bg-rose-500/5">
+        <div className="flex items-center justify-center h-full w-full">
+          <ReloadIcon className="animate-spin w-8 h-8 text-rose-500 dark:text-rose-300" />
+          <div className="ml-2">Deleting Task...</div>
+        </div>
+      </Card>
+    );
+  }
 
   if (editMode) {
     return (
@@ -99,7 +115,7 @@ const KanbanTaskCard = ({
       </ScrollArea>
       <Button
         className="absolute top-1/2 right-5 -translate-y-1/2 opacity-0 group-hover:opacity-100 border-rose-500/30 transition duration-500 ease-in-out"
-        onClick={() => deleteTask(task.id)}
+        onClick={handleDeleteTask}
         variant={"kanban"}
         size={"sm"}
       >

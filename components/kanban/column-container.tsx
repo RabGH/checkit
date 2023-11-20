@@ -74,100 +74,101 @@ function ColumnContainer({
 
   // console.log("Tasks:", tasks);
 
+  const handleDeleteColumn = () => {
+    startDeleteTransition(() => deleteColumn(column.id));
+  };
+
+  if (isColumnDeleting) {
+    return (
+      <Card className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-rose-900/5 hover:border-rose-500/50 transition duration-300 ease-in-out">
+        <div className="flex items-center justify-center h-full w-full">
+          <ReloadIcon className="animate-spin w-8 h-8 text-rose-500 dark:text-rose-300" />
+          <div className="ml-2">Deleting...</div>
+        </div>
+      </Card>
+    );
+  }
+
+  const handleTaskCreation = () => {
+    startTaskCreationTransition(() => createTask(column.id));
+  };
+
   return (
     <Card
       ref={setNodeRef}
       style={style}
       className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/30 hover:bg-rose-500/5 dark:hover:bg-rose-900/5 hover:border-rose-500/50 transition duration-300 ease-in-out"
     >
-      {isColumnDeleting && (
-        <div className="flex items-center justify-center h-full w-full">
-          <ReloadIcon className="animate-spin w-8 h-8 text-rose-500" />
-          <div className="ml-2">Deleting...</div>
-        </div>
-      )}
       {/* Column title */}
-      {!isColumnDeleting && (
-        <div
-          {...attributes}
-          {...listeners}
-          onClick={() => setEditMode(true)}
-          className="flex items-center justify-between dark:bg-white/10 bg-rose-500/20 text-lg h-[60px] cursor-grab rounded-t-lg p-3 font-regular dark:border-black border-2 border-white hover:bg-rose-500/10 dark:hover:bg-white/5"
-        >
-          <div className="flex gap-2">
-            <Badge
-              variant={"kanban"}
-              className="flex justify-center items-center"
-            >
-              {tasks.length}
-            </Badge>
-            {!editMode && column.title}
-            {editMode && (
-              <Input
-                value={column.title}
-                onChange={(e) => updateColumn(column.id, e.target.value)}
-                autoFocus
-                onBlur={() => {
-                  setEditMode(false);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key !== "Enter") return;
-                  setEditMode(false);
-                }}
-                className="text-black dark:text-white focus-visible:text-black focus-visible:ring-rose-500 dark:focus-visible:bg-black"
-              />
-            )}
-          </div>
-          <Button
-            onClick={() => {
-              startDeleteTransition(() => deleteColumn(column.id));
-            }}
+      <div
+        {...attributes}
+        {...listeners}
+        onClick={() => setEditMode(true)}
+        className="flex items-center justify-between dark:bg-white/10 bg-rose-500/20 text-lg h-[60px] cursor-grab rounded-t-lg p-3 font-regular dark:border-black border-2 border-white hover:bg-rose-500/10 dark:hover:bg-white/5"
+      >
+        <div className="flex gap-2">
+          <Badge
             variant={"kanban"}
+            className="flex justify-center items-center"
           >
-            <TrashIcon />
-          </Button>
+            {tasks.length}
+          </Badge>
+          {!editMode && column.title}
+          {editMode && (
+            <Input
+              value={column.title}
+              onChange={(e) => updateColumn(column.id, e.target.value)}
+              autoFocus
+              onBlur={() => {
+                setEditMode(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") return;
+                setEditMode(false);
+              }}
+              className="text-black dark:text-white focus-visible:text-black focus-visible:ring-rose-500 dark:focus-visible:bg-black"
+            />
+          )}
         </div>
-      )}
+        <Button onClick={handleDeleteColumn} variant={"kanban"}>
+          <TrashIcon />
+        </Button>
+      </div>
 
       {/* Column task container */}
-
-      {!isColumnDeleting && (
-        <ScrollArea
-          className="flex flex-grow flex-col p-2"
-          thumbClassName="bg-rose-900"
-        >
-          {isTaskCreating && (
-            <Card className="mb-2 h-[100px] min-h-[100px] w-full p-2 flex flex-col rounded-lg border border-rose-500 dark:bg-rose-900 dark:opacity-20 bg-rose-500/5">
-              <div className="flex items-center justify-center h-full w-full">
-                <ReloadIcon className="animate-spin w-8 h-8 text-rose-500" />
-                <div className="ml-2">Creating Task...</div>
-              </div>
-            </Card>
-          )}
-          <div className="space-y-2">
-            <SortableContext items={tasksIds}>
-              {tasks.map((task) => (
-                <KanbanTaskCard
-                  key={task.id}
-                  task={task}
-                  deleteTask={deleteTask}
-                  updateTask={updateTask}
-                />
-              ))}
-            </SortableContext>
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )}
+      <ScrollArea
+        className="flex flex-grow flex-col p-2"
+        thumbClassName="bg-rose-900"
+      >
+        {isTaskCreating && (
+          <Card className="mb-2 h-[100px] min-h-[100px] w-full p-2 flex flex-col rounded-lg border border-rose-500 dark:bg-rose-900 bg-rose-500/5">
+            <div className="flex items-center justify-center h-full w-full">
+              <ReloadIcon className="animate-spin w-8 h-8 text-rose-500 dark:text-rose-300" />
+              <div className="ml-2">Creating Task...</div>
+            </div>
+          </Card>
+        )}
+        <div className="space-y-2">
+          <SortableContext items={tasksIds}>
+            {tasks.map((task) => (
+              <KanbanTaskCard
+                key={task.id}
+                task={task}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+              />
+            ))}
+          </SortableContext>
+        </div>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
 
       {/* Column footer */}
-      {!isColumnDeleting && !isTaskCreating && (
+      {!isTaskCreating && (
         <div className="flex items-center justify-start w-full">
           <Button
             variant={"kanban"}
-            onClick={() => {
-              startTaskCreationTransition(() => createTask(column.id));
-            }}
+            onClick={handleTaskCreation}
             className="flex gap-2 justify-start items-center p-2 border-none w-full rounded-t-none active:bg-rose-950"
           >
             <PlusCircledIcon /> Add Task

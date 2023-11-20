@@ -302,7 +302,7 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
   }
 
   return (
-    <ScrollArea className="mx-auto flex min-h-[65vh] items-center px-[40px]">
+    <ScrollArea className="mx-auto flex min-h-[65vh] px-[40px]">
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
@@ -328,7 +328,7 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
                     className="w-[350px] h-[500px] max-h-[500px] dark:bg-black rounded-lg flex flex-col border border-rose-500/50 bg-rose-500/20 dark:bg-rose-900/20"
                   >
                     <div className="flex items-center justify-center h-full w-full">
-                      <ReloadIcon className="animate-spin w-8 h-8 text-rose-500" />
+                      <ReloadIcon className="animate-spin w-8 h-8 text-rose-500 dark:text-rose-300" />
                       <div className="ml-2">Creating...</div>
                     </div>
                   </Card>
