@@ -28,7 +28,7 @@ import {
   DeleteKanbanColumn,
   getKanbanColumns,
 } from "@/actions/kanban-column";
-import { getKanbanTasks } from "@/actions/kanban-task";
+import { CreateKanbanTask, getKanbanTasks } from "@/actions/kanban-task";
 
 interface KanbanBoardProps {
   userId: string;
@@ -56,7 +56,6 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
         setTasks(fetchedTasks);
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Handle error, e.g., display a toast
         toast({
           title: "Error",
           description: "Error fetching data. Please try again later.",
@@ -133,15 +132,29 @@ function KanbanBoard({ userId }: KanbanBoardProps) {
     setColumns(newColumns);
   }
 
-  function createTask(kanbanColumnId: Id) {
-    const newTask: Task = {
-      userId: userId,
-      id: generateId(),
-      kanbanColumnId,
-      content: `Task ${tasks.length + 1}`,
-    };
-
-    setTasks([...tasks, newTask]);
+  async function createTask(kanbanColumnId: number) {
+    try {
+      const newTask: Task = await CreateKanbanTask({
+        id: generateId(),
+        kanbanColumnId,
+        content: `Task ${tasks.length + 1}`,
+        userId: userId,
+      });
+      toast({
+        title: "Success",
+        description: `Task created. ${newTask.createdAt?.toLocaleDateString(
+          "en-US"
+        )}`,
+        variant: "default",
+      });
+      setTasks([...tasks, newTask]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    }
   }
 
   function updateTask(id: Id, content: string) {

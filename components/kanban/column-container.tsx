@@ -18,7 +18,7 @@ interface ColumnContainer {
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
 
-  createTask: (columnId: Id) => void;
+  createTask: (columnId: number) => void;
   updateTask: (id: Id, content: string) => void;
   deleteTask: (id: Id) => void;
   tasks: Task[];
